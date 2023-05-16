@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Testování WebSocket</title>
+    <script>
+        var socket = new WebSocket("ws://localhost:12345/sockets-test/server2.php"); // Upravte adresu a port podle potřeby
+
+        socket.onopen = function () {
+            console.log("WebSocket spojení bylo úspěšně navázáno.");
+            // Zde můžete provést další akce po úspěšném navázání spojení
+        };
+
+        socket.onmessage = function (event) {
+            var message = event.data;
+            console.log("Přijata zpráva: " + message);
+            // Zpracování seznamu klientů
+            if (message.startsWith("client_update:")) {
+                var clientList = message.substring("client_update:".length).trim();
+                var clientIdSelect = document.getElementById("clientIdSelect");
+
+                // Vymaž aktuální možnosti v selectu
+                clientIdSelect.innerHTML = "";
+
+                // Rozděl seznam klientů a vytvoř nové možnosti v selectu
+                var clients = clientList.split(",");
+                for (var i = 0; i < clients.length; i++) {
+                    var clientId = clients[i].trim();
+
+                    // Vytvoř novou možnost v selectu
+                    var option = document.createElement("option");
+                    option.value = clientId;
+                    option.textContent = clientId;
+                    clientIdSelect.appendChild(option);
+                }
+            } else if (message.startsWith("private_message:")) {
+                var parts = message.split(":");
+                var senderID = parts[1];
+                var text = parts[2];
+
+                console.log("Obdržena zpráva od klienta s ID: " + senderID);
+                console.log("Obsah zprávy: " + text);
+            }
+
+
+            // Zde můžete provést další akce při přijetí zprávy
+        };
+
+        socket.onclose = function (event) {
+            console.log("WebSocket spojení bylo uzavřeno.");
+            // Zde můžete provést další akce po uzavření spojení
+        };
+
+        function sendWebSocketMessage() {
+            var select = document.getElementById("commandSelect");
+            var command = select.value;
+            var messageText = document.getElementById("messageText").value;
+            var message = "";
+
+            if (command === "message") {
+                message = command + messageText;
+            } else if (command === "privateMessage") {
+                var selectedId = document.getElementById("clientIdSelect").value;
+                message = command + "," + selectedId + "," + messageText;
+            } else {
+                message = command;
+            }
+
+            socket.send(message);
+            console.log("Odeslána zpráva: " + message);
+            // Zde můžete provést další akce při odeslání zprávy
+        }
+
+        function handleCommandSelectChange() {
+            var select = document.getElementById("commandSelect");
+            var messageText = document.getElementById("messageText");
+            var clientIdSelect = document.getElementById("clientIdSelect");
+
+            if (select.value === "message") {
+                messageText.style.display = "inline-block";
+                clientIdSelect.style.display = "none";
+            } else if (select.value === "privateMessage") {
+                messageText.style.display = "inline-block";
+                clientIdSelect.style.display = "inline-block";
+            } else {
+                messageText.style.display = "none";
+                clientIdSelect.style.display = "none";
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Testování WebSocket spojení</h1>
+    <select id="commandSelect" onchange="handleCommandSelectChange()">
+        <option value="message">Message</option>
+        <option value="clients">Clients</option>
+        <option value="privateMessage">Private Message</option>
+    </select>
+    <input type="text" id="messageText" placeholder="Zpráva" style="display: none;">
+    <select id="clientIdSelect" style="display: none;">
+        <!-- Možnosti pro výběr ID klientů -->
+    </select>
+    <button onclick="sendWebSocketMessage()">Odeslat</button>
+
+    <script>
+        handleCommandSelectChange();
+    </script>
+</body>
+
+</html>
