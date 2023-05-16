@@ -1,1 +1,5 @@
 # WebSocket-Private-Messaging-PHP
+The "WebSocket-Private-Messaging-PHP" project is a web application written in PHP that enables clients to communicate with each other using private messages via the WebSocket protocol. The application utilizes the socket libraries in PHP to establish real-time bidirectional communication channels between clients and the server. Clients can send and receive private messages securely and efficiently within a web browser environment.
+
+
+Projekt "WebSocket-Private-Messaging-PHP" je webová aplikace napsaná v PHP, která umožňuje klientům vzájemnou komunikaci pomocí soukromých zpráv prostřednictvím WebSocket protokolu. Aplikace využívá socket knihovny v PHP k vytvoření v reálném čase obousměrných komunikačních kanálů mezi klienty a serverem. Klienti mohou v bezpečném a efektivním prostředí webového prohlížeče posílat a přijímat soukromé zprávy.
